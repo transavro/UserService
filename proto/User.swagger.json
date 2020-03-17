@@ -1,0 +1,354 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "User.proto",
+    "version": "1.0.0"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/createuser": {
+      "post": {
+        "operationId": "CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserCreateReponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUser"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/deleteuser": {
+      "post": {
+        "operationId": "DeleteUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserDeleteReponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserDeleteRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/getlinkeddevices": {
+      "post": {
+        "operationId": "GetLinkedDevices",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserLinkedDeviceResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserGetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/getuser": {
+      "post": {
+        "operationId": "GetUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserUser"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserGetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/linkedtvdevice": {
+      "post": {
+        "operationId": "LinkedTvDevice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserLinkedDeviceResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserTvDevice"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/removetvdevice": {
+      "post": {
+        "operationId": "RemoveTvDevice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserRemoveTvDeviceResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserRemoveTvDeviceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
+    "/updateuser": {
+      "post": {
+        "operationId": "UpdateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserUpdateResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUser"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "UserCreateReponse": {
+      "type": "object",
+      "properties": {
+        "isCreated": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "UserDeleteReponse": {
+      "type": "object",
+      "properties": {
+        "isDeleted": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "UserDeleteRequest": {
+      "type": "object",
+      "properties": {
+        "googleId": {
+          "type": "string"
+        }
+      }
+    },
+    "UserGetRequest": {
+      "type": "object",
+      "properties": {
+        "googleId": {
+          "type": "string"
+        }
+      }
+    },
+    "UserLinkedDevice": {
+      "type": "object",
+      "properties": {
+        "tvEmac": {
+          "type": "string"
+        },
+        "tvPanel": {
+          "type": "string"
+        },
+        "tvBoard": {
+          "type": "string"
+        }
+      }
+    },
+    "UserLinkedDeviceResponse": {
+      "type": "object",
+      "properties": {
+        "isLinkedDeviceFetched": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "linkedDevices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserLinkedDevice"
+          }
+        }
+      }
+    },
+    "UserRemoveTvDeviceRequest": {
+      "type": "object",
+      "properties": {
+        "googleId": {
+          "type": "string"
+        },
+        "tvEmac": {
+          "type": "string"
+        }
+      }
+    },
+    "UserRemoveTvDeviceResponse": {
+      "type": "object",
+      "properties": {
+        "isTvDeviceRemoved": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "UserTvDevice": {
+      "type": "object",
+      "properties": {
+        "googleId": {
+          "type": "string"
+        },
+        "linkedDevice": {
+          "$ref": "#/definitions/UserLinkedDevice"
+        }
+      }
+    },
+    "UserUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "isUpdated": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "UserUser": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        },
+        "googleId": {
+          "type": "string"
+        },
+        "dateOfBirth": {
+          "type": "string"
+        },
+        "genre": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "language": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contentType": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "linkedDevices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserLinkedDevice"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}
