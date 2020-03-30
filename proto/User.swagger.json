@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "User.proto",
-    "version": "1.0.0"
+    "version": "version not set"
   },
   "consumes": [
     "application/json"
@@ -221,6 +221,15 @@
         }
       }
     },
+    "UserGender": {
+      "type": "string",
+      "enum": [
+        "NOTDEFINED",
+        "MALE",
+        "FEMALE"
+      ],
+      "default": "NOTDEFINED"
+    },
     "UserGetRequest": {
       "type": "object",
       "properties": {
@@ -316,6 +325,12 @@
         "dateOfBirth": {
           "type": "string"
         },
+        "gender": {
+          "$ref": "#/definitions/UserGender"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
         "genre": {
           "type": "array",
           "items": {
@@ -348,7 +363,8 @@
           "type": "string",
           "format": "date-time"
         }
-      }
+      },
+      "title": "Date dd/MM/YYYY"
     }
   }
 }

@@ -101,14 +101,21 @@ message CreateReponse {
     bool isCreated = 1;
 }
 
-// Date dd/MM/YYYY
+enum Gender{
+    NOTDEFINED = 0;
+    MALE = 1;
+    FEMALE = 2;
+}
 
+// Date dd/MM/YYYY
 message User {
     string name = 1;
     string email = 2;
     string phoneNumber = 3;
     string googleId = 4;
     string dateOfBirth = 5;
+    Gender gender = 12;
+    string imageUrl = 13;
     repeated string genre = 6;
     repeated string language = 7;
     repeated string contentType = 8;

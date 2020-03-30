@@ -135,7 +135,7 @@ func (h *Server) RemoveTvDevice(ctx context.Context, request *pb.RemoveTvDeviceR
 		}
 	}
 	response.IsTvDeviceRemoved = false
-	return nil, makingError("Database error", fmt.Sprintf("Tv device not found associated with user profile %s ", err.Error()), codes.Internal)
+	return nil, makingError("Database error", fmt.Sprintf("Tv device not found associated with user profile %s ", request.GetGoogleId()), codes.Internal)
 }
 
 func (h *Server) GetLinkedDevices(ctx context.Context, request *pb.GetRequest) (*pb.LinkedDeviceResponse, error) {
