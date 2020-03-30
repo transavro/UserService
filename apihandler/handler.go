@@ -149,3 +149,31 @@ func (h *Server) GetLinkedDevices(ctx context.Context, request *pb.GetRequest) (
 	response.IsLinkedDeviceFetched = true
 	return &response, nil
 }
+
+func (h *Server) GetLinkedUsers(ctx context.Context, linkUserReq *pb.LinkUserRequest) (*pb.LinkUserResponse, error) {
+
+	if linkUserReq.GetEmac() == "" {
+		return nil, makingError("Invalid Request", fmt.Sprintf("TV Emac cannot be empty"), codes.InvalidArgument)
+	}
+
+	// find all the user who have the requested tv emac
+	result_cursor, err := h.UserCollection.Find(ctx, bson.M{"linkeddevices.tvemac": linkUserReq.GetEmac()})
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, makingError("Database Error", fmt.Sprintf("No Users Linked to %s TV emac", linkUserReq.GetEmac()), codes.NotFound)
+		}
+		return nil, makingError("Database Error", fmt.Sprint(err.Error()), codes.Internal)
+	}
+
+	linkedUsers := new(pb.LinkUserResponse)
+	for result_cursor.Next(ctx) {
+		var user pb.User
+		err = result_cursor.Decode(&user)
+		if err != nil {
+			return nil, makingError("Internal Error", fmt.Sprintf("Error while decoding data %s", err.Error()), codes.Internal)
+		}
+		linkedUsers.User = append(linkedUsers.User, &user)
+	}
+	return linkedUsers, nil
+}

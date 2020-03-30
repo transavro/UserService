@@ -58,6 +58,22 @@ service UserService{
                 body: "*"
         };
     }
+
+    rpc GetLinkedUsers (LinkUserRequest) returns (LinkUserResponse){
+        option (google.api.http) = {
+                post:"/getlinkedusers"
+                body: "*"
+        };
+    }
+}
+
+
+message LinkUserRequest{
+    string emac = 1;
+}
+
+message LinkUserResponse {
+    repeated User user = 1;
 }
 
 

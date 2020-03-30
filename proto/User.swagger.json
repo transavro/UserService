@@ -89,6 +89,32 @@
         ]
       }
     },
+    "/getlinkedusers": {
+      "post": {
+        "operationId": "GetLinkedUsers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/UserLinkUserResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserLinkUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "UserService"
+        ]
+      }
+    },
     "/getuser": {
       "post": {
         "operationId": "GetUser",
@@ -235,6 +261,25 @@
       "properties": {
         "googleId": {
           "type": "string"
+        }
+      }
+    },
+    "UserLinkUserRequest": {
+      "type": "object",
+      "properties": {
+        "emac": {
+          "type": "string"
+        }
+      }
+    },
+    "UserLinkUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserUser"
+          }
         }
       }
     },
