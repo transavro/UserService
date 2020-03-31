@@ -2,8 +2,6 @@ package apihandler
 
 import (
 	pb "UserService/proto"
-	"fmt"
-	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"regexp"
@@ -64,16 +62,18 @@ func validatingData(user *pb.User) error {
 }
 
 func makingError(filedName, desc string, code codes.Code) error {
-	st := status.New(code, fmt.Sprintf("invalid %s", filedName))
-	v := &errdetails.BadRequest_FieldViolation{
-		Field:       filedName,
-		Description: desc,
-	}
-	br := &errdetails.BadRequest{}
-	br.FieldViolations = append(br.FieldViolations, v)
-	st, err := st.WithDetails(br)
-	if err != nil {
-		panic(fmt.Sprintf("Unexpected error attaching metadata: %v", err))
-	}
-	return st.Err()
+	return status.Error(code, desc)
+
+	//st := status.New(code, fmt.Sprintf("invalid %s", filedName))
+	//v := &errdetails.BadRequest_FieldViolation{
+	//	Field:       filedName,
+	//	Description: desc,
+	//}
+	//br := &errdetails.BadRequest{}
+	//br.FieldViolations = append(br.FieldViolations, v)
+	//st, err := st.WithDetails(br)
+	//if err != nil {
+	//	panic(fmt.Sprintf("Unexpected error attaching metadata: %v", err))
+	//}
+	//return st.Err()
 }
