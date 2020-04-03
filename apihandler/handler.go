@@ -29,6 +29,7 @@ func (h *Server) CreateUser(ctx context.Context, req *pb.User) (*pb.CreateRepons
 		if findResult.Err() == mongo.ErrNoDocuments {
 			ts, _ := ptypes.TimestampProto(time.Now())
 			req.CreatedAt = ts
+			req.LinkedDevices = []*pb.LinkedDevice{}
 			_, err := h.UserCollection.InsertOne(context.Background(), req)
 			if err != nil {
 				return nil, makingError("Internal Server error", fmt.Sprintf("Error while creating user in Database. %s ", err.Error()), codes.Internal)
@@ -92,6 +93,14 @@ func (h *Server) DeleteUser(ctx context.Context, request *pb.DeleteRequest) (*pb
 }
 
 func (h *Server) LinkedTvDevice(ctx context.Context, request *pb.TvDevice) (*pb.LinkedDeviceResponse, error) {
+
+	// if request is not proper
+	if request.GetGoogleId() == "" {
+		return nil, makingError("Request Error", fmt.Sprint("Google id cannot be empty"), codes.InvalidArgument)
+	}else if request.GetLinkedDevice() == nil {
+		return nil, makingError("Request Error", fmt.Sprintf("Linked Device cannot be empty for google id %s ", request.GetGoogleId()), codes.InvalidArgument)
+	}
+
 	var cwUser pb.User
 	var response pb.LinkedDeviceResponse
 	err := h.UserCollection.FindOne(ctx, bson.D{{"googleid", request.GetGoogleId()}}).Decode(&cwUser)

@@ -138,11 +138,11 @@ message User {
     repeated LinkedDevice linkedDevices = 9;
     google.protobuf.Timestamp createdAt = 10;
     google.protobuf.Timestamp updatedAt = 11;
-
 }
 
 message LinkedDevice {
     string tvEmac = 1;
     string tvPanel = 2;
     string tvBoard = 3;
+    string tvName = 4;
 }
