@@ -5,6 +5,7 @@ import (
 	pb "UserService/proto"
 	"fmt"
 	codecs "github.com/amsokol/mongo-go-driver-protobuf"
+	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -70,7 +71,7 @@ func startGRPCServer(address string) error {
 		getMongoCollection("cloudwalker", "users", defaultAtlasHost),
 	}
 	//serverOptions := []grpc.ServerOption{grpc.UnaryInterceptor(unaryInterceptor), grpc.StreamInterceptor(streamIntercept)}
-	serverOptions := []grpc.ServerOption{}
+	serverOptions := []grpc.ServerOption{grpc.UnaryInterceptor(grpc_validator.UnaryServerInterceptor())}
 	grpcServer := grpc.NewServer(serverOptions...)
 	// attach the Ping service to the server
 	pb.RegisterUserServiceServer(grpcServer, &s)

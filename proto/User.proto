@@ -3,73 +3,97 @@ syntax = "proto3";
 
 package User;
 
+
+import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "google/type/date.proto";
 import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "github.com/mwitkow/go-proto-validators/validator.proto";
 
-service UserService{
-    rpc CreateUser (User) returns (CreateReponse) {
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+  info: {
+    version: "1.0";
+  };
+external_docs: {
+url: "https://github.com/transavro/UserService";
+description: "User Service repository";
+}
+schemes: HTTPS;
+};
+
+service UserService {
+
+    rpc AddUser (User) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-                post:"/createuser"
-                body: "*"
+            post: "/userservice/v1/addUser"
+            body: "*"
         };
     }
-    rpc UpdateUser (User) returns (UpdateResponse) {
+
+    rpc ListUsers (google.protobuf.Empty) returns (stream User) {
         option (google.api.http) = {
-                post:"/updateuser"
-                body: "*"
+            get: "/userservice/v1/listUsers"
         };
     }
-
-
-    rpc DeleteUser (DeleteRequest) returns (DeleteReponse) {
-        option (google.api.http) = {
-                post:"/deleteuser"
-                body: "*"
-        };
-    }
-
 
     rpc GetUser (GetRequest) returns (User) {
         option (google.api.http) = {
-                post:"/getuser"
-                body: "*"
+                get:"/userservice/v1/getUser/{googleId}"
         };
     }
 
 
-    rpc LinkedTvDevice (TvDevice) returns (LinkedDeviceResponse) {
+    rpc UpdateUser (User) returns (User) {
         option (google.api.http) = {
-                post:"/linkedtvdevice"
-                body: "*"
+            put: "/userservice/v1/updateUser/{googleId}"
+            body: "*"
+        };
+    }
+
+    rpc DeleteUser (DeleteRequest) returns (DeleteReponse) {
+        option (google.api.http) = {
+                delete:"/userservice/v1/deleteUser/{googleId}"
+        };
+    }
+
+    rpc AddTvDevice (TvDevice) returns (LinkedDeviceResponse) {
+        option (google.api.http) = {
+            post: "/userservice/v1/addTvDevice"
+            body: "*"
         };
     }
 
 
+    // tv emac without collons
     rpc RemoveTvDevice (RemoveTvDeviceRequest) returns (RemoveTvDeviceResponse) {
         option (google.api.http) = {
-                post:"/removetvdevice"
+                post:"/userservice/v1/removeTvDevice"
                 body: "*"
         };
     }
 
     rpc GetLinkedDevices (GetRequest) returns (LinkedDeviceResponse) {
         option (google.api.http) = {
-                post:"/getlinkeddevices"
-                body: "*"
+                get:"/userservice/v1/getLinkDevices/{googleId}"
         };
     }
 
-    rpc GetLinkedUsers (LinkUserRequest) returns (LinkUserResponse){
+    rpc GetLinkedUsers (LinkUserRequest) returns (LinkUserResponse) {
         option (google.api.http) = {
-                post:"/getlinkedusers"
-                body: "*"
+                get:"/userservice/v1/getLinkUsers/{tvEmac}"
         };
     }
 }
 
 
-message LinkUserRequest{
-    string emac = 1;
+message LinkUserRequest {
+    string tvEmac = 1 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Tv Emac cannot be empty."
+    }];
 }
 
 message LinkUserResponse {
@@ -78,8 +102,16 @@ message LinkUserResponse {
 
 
 message RemoveTvDeviceRequest {
-    string googleId = 1;
-    string tvEmac = 2;
+    string googleId = 1 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "User Id cannot be empty."
+    }];
+    string tvEmac = 2 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Tv Emac cannot be empty."
+    }];
 }
 
 message RemoveTvDeviceResponse {
@@ -87,11 +119,19 @@ message RemoveTvDeviceResponse {
 }
 
 message GetRequest {
-    string googleId = 1;
+    string googleId = 1 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "User Id cannot be empty."
+    }];
 }
 
 message DeleteRequest {
-    string googleId = 1;
+    string googleId = 1 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "User Id cannot be empty."
+    }];
 }
 
 message DeleteReponse {
@@ -105,7 +145,11 @@ message LinkedDeviceResponse {
 
 
 message TvDevice {
-    string googleId = 1;
+    string googleId = 1 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "User Id cannot be empty."
+    }];
     LinkedDevice linkedDevice = 2;
 }
 
@@ -117,7 +161,7 @@ message CreateReponse {
     bool isCreated = 1;
 }
 
-enum Gender{
+enum Gender {
     NOTDEFINED = 0;
     MALE = 1;
     FEMALE = 2;
@@ -125,24 +169,110 @@ enum Gender{
 
 // Date dd/MM/YYYY
 message User {
-    string name = 1;
-    string email = 2;
-    string phoneNumber = 3;
-    string googleId = 4;
-    string dateOfBirth = 5;
-    Gender gender = 12;
-    string imageUrl = 13;
-    repeated string genre = 6;
-    repeated string language = 7;
-    repeated string contentType = 8;
+
+    // important_string must be a lowercase alpha-numeric of 5 to 30 characters (RE2 syntax).
+    string name = 1 [(validator.field) = {
+    regex: "^[a-zA-Z ]{3,20}$"
+    human_error: "User name cannot contain Numbers"
+    }];
+
+    string email = 2 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Email id cannot contain be empty"
+    }];
+
+    string phoneNumber = 3 [(validator.field) = {
+    regex: "^[0-9]*$"
+    length_eq : 10
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Phone number must be of 10 digit and should be consist of only numbers."
+    }];
+
+    string googleId = 4 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "User Id cannot be empty."
+    }];
+
+
+    google.type.Date dateOfBirth = 5 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Date of birth cannot be empty."
+    }];
+
+
+    Gender gender = 12 [(validator.field) = {
+    msg_exists : true
+    is_in_enum : true
+    human_error: "Gender cannot be empty or Invalid."
+    }];
+
+
+    string imageUrl = 13 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Image Url cannot be empty."
+    }];
+
+
+    repeated string genre = 6
+    [(validator.field) = {
+    repeated_count_min : 3
+    string_not_empty : true
+    msg_exists : true
+    human_error: "Please Select Genre greater than 3 and cannot be empty."
+    }];
+
+
+    repeated string language = 7
+    [(validator.field) = {
+    repeated_count_min : 3
+    string_not_empty : true
+    msg_exists : true
+    human_error: "Please Select Language greater than 3 and cannot be empty."
+    }];
+
+
+    repeated string contentType = 8
+    [(validator.field) = {
+    repeated_count_min : 3
+    string_not_empty : true
+    msg_exists : true
+    human_error: "Please Select ContentType greater than 3 and cannot be empty."
+    }];
+
+
     repeated LinkedDevice linkedDevices = 9;
     google.protobuf.Timestamp createdAt = 10;
     google.protobuf.Timestamp updatedAt = 11;
 }
 
 message LinkedDevice {
-    string tvEmac = 1;
-    string tvPanel = 2;
-    string tvBoard = 3;
-    string tvName = 4;
+
+    string tvEmac = 1  [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Tv Emac cannot be empty."
+    }];
+
+    string tvPanel = 2 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Tv Panel cannot be empty."
+    }];
+
+    string tvBoard = 3 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Tv Board cannot be empty."
+    }];
+
+    string tvName = 4 [(validator.field) = {
+    msg_exists : true
+    string_not_empty : true
+    human_error: "Tv Name cannot be empty."
+    }];
 }
