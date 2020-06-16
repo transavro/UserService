@@ -94,6 +94,7 @@ func startRESTServer(address, grpcAddress string) error {
 		return fmt.Errorf("could not register service Ping: %s", err)
 	}
 	log.Printf("starting HTTP/1.1 REST server on %s", address)
+	log.Printf("starting HTTP/1.1 GRPC server on %s", grpcAddress)
 	http.ListenAndServe(address, mux)
 	return nil
 }
